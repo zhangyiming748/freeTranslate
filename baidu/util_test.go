@@ -1,16 +1,17 @@
 package baidu
 
 import (
+	"fmt"
 	"testing"
 )
 
-func TestJp(t *testing.T) {
-	ret := AskBaidu("jp", "zh", "あっ、すいません")
-	t.Log(ret)
-}
-func TestEn(t *testing.T) {
-	AskBaidu("zh", "en", "苹果")
-}
-func TestStep1(t *testing.T) {
-	AskBaidu("zh", "en", "苹果")
+func TestMap(t *testing.T) {
+	m := make(map[string]string)
+	m["a"] = "e"
+	m["b"] = "f"
+	if v, ok := m["a"]; ok {
+		fmt.Println("have", v)
+	} else {
+		fmt.Println("have not")
+	}
 }

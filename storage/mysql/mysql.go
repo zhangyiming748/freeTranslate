@@ -1,10 +1,10 @@
 package mysql
 
 import (
+	"freeTranslate/util"
 	_ "github.com/go-sql-driver/mysql"
 	"log/slog"
 	"os"
-	"processAVIWithXorm/util"
 	"strings"
 	"time"
 	"xorm.io/xorm"
