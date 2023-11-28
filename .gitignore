@@ -10,3 +10,5 @@ go.work
 .idea
 .DS_Store
 *.log
+conf.ini
+*.srt

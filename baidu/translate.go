@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"freeTranslate/constant"
+	"freeTranslate/model"
 	"freeTranslate/replace"
 	"freeTranslate/util"
 	"strings"
@@ -44,8 +45,19 @@ func AskBaidu(from, to, query string) string {
 	}
 	var s Success
 	var f Failure
-	if err = json.Unmarshal(get, &s); err != nil {
+	h := new(model.History)
+	err = json.Unmarshal(get, &s)
+	if err != nil {
 		json.Unmarshal(get, &f)
+		h.ErrorCode = f.ErrorCode
+		h.ErrorMsg = f.ErrorMsg
+		h.InsertOne()
+	} else {
+		h.From = s.From
+		h.To = s.To
+		h.Src = s.TransResult[0].Src
+		h.Dst = s.TransResult[0].Dst
+		h.InsertOne()
 	}
 	fmt.Println(string(get))
 	resule := replace.ChinesePunctuation(s.TransResult[0].Dst)

@@ -3,8 +3,8 @@ package util
 import (
 	"errors"
 	"fmt"
+	"freeTranslate/util/goini"
 	"log/slog"
-	"processAVIWithXorm/util/goini"
 )
 
 const confPath = "./conf.ini"

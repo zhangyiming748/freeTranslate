@@ -18,3 +18,9 @@ const (
 	Zettabyte = 1000 * Exabyte
 	Yottabyte = 1000 * Zettabyte
 )
+const HTTPS = "https://fanyi-api.baidu.com/api/trans/vip/translate"
+const (
+	JP = "jp"
+	EN = "en"
+	ZH = "zh"
+)
