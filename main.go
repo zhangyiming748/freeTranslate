@@ -6,12 +6,14 @@ import (
 	"freeTranslate/model"
 	"freeTranslate/storage/mysql"
 	"freeTranslate/util"
+	"io"
 	"log/slog"
 	"os"
 	"time"
 )
 
 func init() {
+	setLog()
 	//初始化数据库和数据表
 	mysql.SetEngine()
 	model.SyncHistory()
@@ -63,4 +65,17 @@ func main() {
 		time.Sleep(10 * time.Second)
 		//fmt.Printf("循环一次后cache的情况: %+v\n", cache)
 	}
+}
+func setLog() {
+	opt := slog.HandlerOptions{ // 自定义option
+		AddSource: true,
+		Level:     slog.LevelDebug, // slog 默认日志级别是 info
+	}
+	file := "Process.log"
+	logf, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0770)
+	if err != nil {
+		panic(err)
+	}
+	logger := slog.New(slog.NewJSONHandler(io.MultiWriter(logf, os.Stdout), &opt))
+	slog.SetDefault(logger)
 }

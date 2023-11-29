@@ -1,18 +1,22 @@
 package main
 
 import (
+	"freeTranslate/model"
+	"freeTranslate/storage/mysql"
 	"log/slog"
-	"processAVIWithXorm/model"
-	"processAVIWithXorm/storage/mysql"
 	"testing"
 )
 
+func init() {
+	mysql.SetEngine()
+	model.SyncHistory()
+}
 func TestUnit(t *testing.T) {
 	mysql.SetEngine()
-	i := new(model.Image)
-	all, err := i.Sum()
+	h := new(model.History)
+	all, err := h.Sum()
 	if err != nil {
 		return
 	}
-	slog.Debug("all image", slog.Int64("共处理的图片数", all))
+	slog.Info("all words", slog.Int64("共翻译单词", all))
 }
