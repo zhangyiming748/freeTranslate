@@ -57,6 +57,12 @@ func (h *History) FindById() (bool, error) {
 	}
 	return false, nil
 }
+func (h *History) FindBySrc() (bool, error) {
+	if util.GetVal("mysql", "switch") == "on" {
+		return mysql.GetSession().Where("src = ?", h.Src).Get(h)
+	}
+	return false, nil
+}
 
 func (h *History) UpdateById() (int64, error) {
 	if util.GetVal("mysql", "switch") == "on" {

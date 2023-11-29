@@ -6,8 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"freeTranslate/constant"
+	"freeTranslate/model"
 	"freeTranslate/replace"
 	"freeTranslate/util"
+	"log/slog"
 	"strings"
 )
 
@@ -47,9 +49,27 @@ func AskBaidu(query string) string {
 		return ""
 	}
 	var s Success
-	err = json.Unmarshal(get, &s)
-	fmt.Printf("得到的结构体%+v\n", s)
-	fmt.Println(string(get))
+	var f Failure
+	if err = json.Unmarshal(get, &s); err != nil {
+		err = json.Unmarshal(get, &f)
+		if err != nil {
+			slog.Warn("两种结构体序列化均失败")
+			return ""
+		}
+		slog.Debug("失败", slog.Any("结构体", f))
+		h := new(model.History)
+		h.ErrorCode = f.ErrorCode
+		h.ErrorMsg = f.ErrorMsg
+		h.Src = query
+		h.From = from
+		_, err = h.InsertOne()
+		if err != nil {
+			slog.Warn("数据库插入新条目失败", slog.String("源", query), slog.Any("错误原文", err))
+			return ""
+		}
+	} else {
+		slog.Debug("成功", slog.Any("结构体", s))
+	}
 	resule := replace.ChinesePunctuation(s.TransResult[0].Dst)
 	return resule
 }
