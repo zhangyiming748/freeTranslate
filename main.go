@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"freeTranslate/baidu"
 	"freeTranslate/model"
+	"freeTranslate/replace"
 	"freeTranslate/storage/mysql"
+	"freeTranslate/translateShell"
 	"freeTranslate/util"
 	"io"
 	"log/slog"
@@ -23,15 +24,18 @@ func main() {
 	before := util.ReadByLine("before.srt")
 	after, _ := os.OpenFile("after.srt", os.O_RDWR|os.O_APPEND|os.O_CREATE, 0777)
 	for i := 0; i < len(before); i += 4 {
-		after.WriteString(fmt.Sprintf("序号 : %s\n", before[i]))
-		after.WriteString(fmt.Sprintf("时间轴 : %s\n", before[i+1]))
+		after.WriteString(fmt.Sprintf("%s\n", before[i]))
+		after.WriteString(fmt.Sprintf("%s\n", before[i+1]))
 		src := before[i+2]
 		cache := new(model.History)
 		cache.Src = src
 		if has, _ := cache.FindBySrc(); has {
-			after.WriteString(fmt.Sprintf("字幕 : %s\n", cache.Dst))
+			after.WriteString(fmt.Sprintf("%s\n", cache.Dst))
 		} else {
-			dst := baidu.AskBaidu(src)
+			//dst := baidu.AskBaidu(src)
+			dst := translateShell.Translate(src)
+			dst = replace.ChinesePunctuation(dst)
+			after.WriteString(fmt.Sprintf("%s\n", dst))
 			his := new(model.History)
 			his.From = util.GetVal("mysql", "from")
 			his.To = util.GetVal("mysql", "to")
@@ -43,29 +47,17 @@ func main() {
 				slog.Debug("成功插入缓存到数据库", slog.Int64("条目", one))
 			}
 		}
-
-		//if dst, ok := cache[src]; ok {
-		//	after.WriteString(fmt.Sprintf("字幕 : %s\n", dst))
-		//} else {
-		//	dst = baidu.AskBaidu(src)
-		//	//dst = "c"
-		//	cache[src] = dst
-		//	after.WriteString(fmt.Sprintf("字幕 : %s\n", dst))
-		//	h := new(model.History)
-		//	h.Src = src
-		//	h.Dst = dst
-		//	_, err := h.InsertOne()
-		//	if err != nil {
-		//		fmt.Println("数据库插入错误")
-		//		continue
-		//	}
-		//}
-		after.WriteString(fmt.Sprintf("空行 : %s\n", before[i+3]))
+		after.WriteString(fmt.Sprintf("%s\n", before[i+3]))
 		after.Sync()
 		time.Sleep(10 * time.Second)
+		for t := 2; t > 0; t-- {
+			fmt.Printf("冷却时间还有%d秒\n", t)
+			time.Sleep(time.Second)
+		}
 		//fmt.Printf("循环一次后cache的情况: %+v\n", cache)
 	}
 }
+
 func setLog() {
 	opt := slog.HandlerOptions{ // 自定义option
 		AddSource: true,

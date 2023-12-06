@@ -24,7 +24,15 @@ passwd = 163453
 ;要使用的数据库
 database = mydb
 ;数据库地址
-ip = 192.168.1.5
+ip = 192.168.1.6
 ;数据库端口
 port = 3306
+;apk add translate-shell
+;apt-get install translate-shell
+;dnf install translate-shell
+;brew install translate-shell
+[shell]
+from = ja
+to = zh
+proxy = 192.168.1.20:8889
 ```
