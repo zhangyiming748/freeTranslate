@@ -24,7 +24,7 @@ passwd = 163453
 ;要使用的数据库
 database = mydb
 ;数据库地址
-ip = 192.168.1.6
+ip = 192.168.1.5
 ;数据库端口
 port = 3306
 ;apk add translate-shell

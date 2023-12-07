@@ -1,6 +1,7 @@
 package translateShell
 
 import (
+	"fmt"
 	"freeTranslate/util"
 	"log/slog"
 	"os"
@@ -19,10 +20,11 @@ func Translate(src string) string {
 	to := util.GetVal("shell", "to")
 	proxy := util.GetVal("shell", "proxy")
 	language := strings.Join([]string{from, to}, ":")
-	cmd := exec.Command("trans", "-brief", "-proxy", proxy, "-4", language, src)
+	cmd := exec.Command("trans", "-brief", "-proxy", proxy, language, src)
+	fmt.Println(cmd)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		slog.Warn("翻译发生错误,退出", slog.Any("错误原文", err))
+		slog.Warn("翻译发生错误,是否安装了translate-shell?", slog.Any("错误原文", err))
 		os.Exit(-1)
 	}
 	dst := string(output)

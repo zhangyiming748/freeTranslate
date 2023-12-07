@@ -38,6 +38,7 @@ func SetEngine() {
 		}
 	case <-time.After(5 * time.Second):
 		slog.Warn("数据库连接超时")
+		os.Exit(-1)
 		if err := util.SetVal("mysql", "switch", "off"); err != nil {
 			slog.Warn("数据库连接失败后关闭,退出程序")
 			os.Exit(-1)

@@ -49,12 +49,9 @@ func main() {
 		}
 		after.WriteString(fmt.Sprintf("%s\n", before[i+3]))
 		after.Sync()
-		time.Sleep(10 * time.Second)
-		for t := 2; t > 0; t-- {
-			fmt.Printf("冷却时间还有%d秒\n", t)
-			time.Sleep(time.Second)
-		}
-		//fmt.Printf("循环一次后cache的情况: %+v\n", cache)
+
+		time.Sleep(2 * time.Second)
+
 	}
 }
 
