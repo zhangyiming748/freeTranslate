@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"freeTranslate/baidu"
 	"freeTranslate/model"
 	"freeTranslate/replace"
 	"freeTranslate/storage/mysql"
@@ -20,9 +21,23 @@ func init() {
 	model.SyncHistory()
 }
 func main() {
+	var (
+		c  = 0
+		nc = 0
+	)
+	runLevel := util.GetVal("main", "level")
 	//cache := make(map[string]string)
+	outname := "after.srt"
+	switch runLevel {
+	case "baidu":
+
+		outname = "baidu.srt"
+	case "trans":
+		outname = "trans.srt"
+	}
+
 	before := util.ReadByLine("before.srt")
-	after, _ := os.OpenFile("after.srt", os.O_RDWR|os.O_APPEND|os.O_CREATE, 0777)
+	after, _ := os.OpenFile(outname, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0777)
 	for i := 0; i < len(before); i += 4 {
 		after.WriteString(fmt.Sprintf("%s\n", before[i]))
 		after.WriteString(fmt.Sprintf("%s\n", before[i+1]))
@@ -31,9 +46,16 @@ func main() {
 		cache.Src = src
 		if has, _ := cache.FindBySrc(); has {
 			after.WriteString(fmt.Sprintf("%s\n", cache.Dst))
+			fmt.Println("找到缓存,直接返回")
+			c++
 		} else {
-			//dst := baidu.AskBaidu(src)
-			dst := translateShell.Translate(src)
+			var dst string
+			switch runLevel {
+			case "baidu":
+				dst = baidu.AskBaidu(src)
+			case "trans":
+				dst = translateShell.Translate(src)
+			}
 			dst = replace.ChinesePunctuation(dst)
 			after.WriteString(fmt.Sprintf("%s\n", dst))
 			his := new(model.History)
@@ -46,13 +68,14 @@ func main() {
 			} else {
 				slog.Debug("成功插入缓存到数据库", slog.Int64("条目", one))
 			}
+			nc++
 		}
 		after.WriteString(fmt.Sprintf("%s\n", before[i+3]))
 		after.Sync()
 
 		time.Sleep(2 * time.Second)
-
 	}
+	slog.Info("翻译结束", slog.Int("从缓存中找到", c), slog.Int("新建查询", nc))
 }
 
 func setLog() {
