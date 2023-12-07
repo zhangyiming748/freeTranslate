@@ -28,6 +28,7 @@ func Translate(src string) string {
 		os.Exit(-1)
 	}
 	dst := string(output)
+	dst = strings.Replace(dst, "\n", "", 1)
 	slog.Debug("翻译成功", slog.String("原文", src), slog.String("译文", dst))
 	return dst
 }
