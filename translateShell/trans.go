@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+	"time"
 )
 
 func Translate(src string) string {
@@ -24,8 +25,8 @@ func Translate(src string) string {
 	fmt.Println(cmd)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		slog.Warn("翻译发生错误,是否安装了translate-shell?", slog.Any("错误原文", err))
-		os.Exit(-1)
+		time.Sleep(1 * time.Second)
+		output, _ = cmd.CombinedOutput()
 	}
 	dst := string(output)
 	dst = strings.Replace(dst, "\n", "", 1)
