@@ -69,11 +69,10 @@ func main() {
 				slog.Debug("成功插入缓存到数据库", slog.Int64("条目", one))
 			}
 			nc++
+			time.Sleep(2 * time.Second)
 		}
 		after.WriteString(fmt.Sprintf("%s\n", before[i+3]))
 		after.Sync()
-
-		time.Sleep(2 * time.Second)
 	}
 	slog.Info("翻译结束", slog.Int("从缓存中找到", c), slog.Int("新建查询", nc))
 }
