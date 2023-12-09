@@ -24,7 +24,7 @@ func Translate(src string) string {
 	cmd := exec.Command("trans", "-brief", "-proxy", proxy, language, src)
 	fmt.Println(cmd)
 	output, err := cmd.CombinedOutput()
-	if err != nil {
+	if err != nil || strings.Contains(string(output), "\u001B") || strings.Contains(string(output), "Connectiontimedout.RetryingIPv4connection") {
 		time.Sleep(1 * time.Second)
 		output, _ = cmd.CombinedOutput()
 	}

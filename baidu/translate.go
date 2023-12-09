@@ -71,6 +71,7 @@ func AskBaidu(query string) string {
 		slog.Debug("成功", slog.Any("结构体", s))
 	}
 	resule := replace.ChinesePunctuation(s.TransResult[0].Dst)
+	slog.Debug("翻译成功", slog.String("原文", query), slog.String("译文", resule))
 	return resule
 }
 
