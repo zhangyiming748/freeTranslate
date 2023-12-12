@@ -3,7 +3,7 @@ package translateShell
 import (
 	"fmt"
 	"freeTranslate/baidu"
-	"freeTranslate/model"
+	"freeTranslate/replace"
 	"freeTranslate/util"
 	"log/slog"
 	"os"
@@ -34,18 +34,6 @@ func Translate(src string) string {
 		return dst
 	}
 	//dst := string(output)
-	dst = strings.Replace(dst, "\n", "", 1)
-	slog.Debug("翻译成功", slog.String("原文", src), slog.String("译文", dst))
-	his := new(model.History)
-	his.From = util.GetVal("mysql", "from")
-	his.To = util.GetVal("mysql", "to")
-	his.Src = src
-	his.Dst = dst
-	his.Source = "translate-shell"
-	if one, err := his.InsertOne(); err != nil {
-		slog.Warn("数据库插入新条目失败", slog.String("源", src), slog.String("目标", dst), slog.Any("错误原文", err))
-	} else {
-		slog.Debug("成功插入缓存到数据库", slog.Int64("条目", one))
-	}
+	dst = replace.ChinesePunctuation(dst)
 	return dst
 }

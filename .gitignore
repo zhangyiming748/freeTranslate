@@ -12,3 +12,4 @@ go.work
 *.log
 conf.ini
 *.srt
+trans.db

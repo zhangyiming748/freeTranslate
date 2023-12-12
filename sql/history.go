@@ -1,7 +1,6 @@
-package model
+package sql
 
 import (
-	"freeTranslate/sql"
 	"gorm.io/gorm"
 	"time"
 )
@@ -36,9 +35,17 @@ Id         int64     `xorm:"not null pk autoincr comment('主键id') INT" json:"
 	DeleteTime time.Time `xorm:"deleted comment('删除时间') DateTime" json:"delete_time"`
 */
 func (h *History) FindOneBySrc() *gorm.DB {
-	return sql.GetEngine().First(&h, "src = ?", h.Src)
+	return GetEngine().First(&h, "src = ?", h.Src)
 
 }
 func (h *History) SetOne() *gorm.DB {
-	return sql.GetEngine().Create(&h)
+	return GetEngine().Create(&h)
+}
+func (h *History) ExistSrc() bool {
+	result := GetEngine().First(&h, "src = ?", h.Src)
+	if result.Error.Error() == "record not found" {
+		return false
+	} else {
+		return true
+	}
 }

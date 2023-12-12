@@ -24,10 +24,12 @@ func TestGetOne(t *testing.T) {
 	r1 := y.FindOneBySrc()
 	t.Logf("%+v\n", y)
 	n := new(sql.History)
-	n.Src = "he"
+	n.Src = "hello"
 	r2 := n.FindOneBySrc()
-	t.Logf("%+v\n", n)
+	fmt.Println(r2)
+	t.Logf("%+v\n")
 	fmt.Printf("r1 = %v\nr2 = %v\n", r1, r2)
-	fmt.Printf("error = %v\nrowsAffected = %v\nstatement = %v\nclone = %v\n", r2.Error, r2.RowsAffected, r2.Statement, r2.Row())
+
+	fmt.Printf("error = %v\nrowsAffected = %v\nstatement = %v\nclone = %v\n", r2.Error, r2.RowsAffected, r2.Statement.Context, r2.Row())
 	//error = record not found
 }

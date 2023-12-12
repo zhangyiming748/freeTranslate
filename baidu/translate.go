@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"freeTranslate/constant"
-	"freeTranslate/model"
 	"freeTranslate/replace"
+	"freeTranslate/sql"
 	"freeTranslate/util"
 	"log/slog"
 	"strings"
@@ -57,33 +57,30 @@ func AskBaidu(query string) string {
 			return ""
 		}
 		slog.Debug("失败", slog.Any("结构体", f))
-		h := new(model.History)
+		h := new(sql.History)
 		h.ErrorCode = f.ErrorCode
 		h.ErrorMsg = f.ErrorMsg
 		h.Src = query
 		h.From = from
-		_, err = h.InsertOne()
-		if err != nil {
-			slog.Warn("数据库插入新条目失败", slog.String("源", query), slog.Any("错误原文", err))
-			return ""
-		}
-	} else {
-		slog.Debug("成功", slog.Any("结构体", s))
+		h.To = to
+		h.SetOne()
 	}
-	resule := replace.ChinesePunctuation(s.TransResult[0].Dst)
-	slog.Debug("翻译成功", slog.String("原文", query), slog.String("译文", resule))
-	his := new(model.History)
+	dst := replace.ChinesePunctuation(s.TransResult[0].Dst)
+	dst = replace.ChinesePunctuation(dst)
+	his := new(sql.History)
 	his.From = from
 	his.To = to
 	his.Src = query
-	his.Dst = resule
+	his.Dst = dst
 	his.Source = "baidu"
-	if one, err := his.InsertOne(); err != nil {
-		slog.Warn("数据库插入新条目失败", slog.String("源", query), slog.String("目标", resule), slog.Any("错误原文", err))
-	} else {
-		slog.Debug("成功插入缓存到数据库", slog.Int64("条目", one))
+	var parameters string
+	for k, v := range param {
+		parameters = strings.Join([]string{k, v}, ":")
 	}
-	return resule
+	his.Request = parameters
+	his.SetOne()
+	slog.Debug("翻译成功", slog.String("原文", query), slog.String("译文", dst))
+	return dst
 }
 
 /*

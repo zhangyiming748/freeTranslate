@@ -44,6 +44,7 @@ func ChinesePunctuation(str string) string {
 	str = strings.Replace(str, "_", "", -1)
 	str = strings.Replace(str, "：", "", -1)
 	str = strings.Replace(str, "\ufeff", "", -1)
+	str = strings.Replace(str, "\n", "", 1)
 	return str
 }
 
