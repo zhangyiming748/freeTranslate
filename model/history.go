@@ -13,6 +13,7 @@ type History struct {
 	To         string    `xorm:"comment('目标语言') VARCHAR(255)" json:"to"`
 	Src        string    `xorm:"comment('源') VARCHAR(255)" json:"src"`
 	Dst        string    `xorm:"comment('目标') VARCHAR(255)" json:"dst"`
+	Source     string    `xorm:"comment('来源') VARCHAR(255)" json:"source"`
 	ErrorCode  string    `xorm:"comment('错误代码') VARCHAR(255)" json:"error_code"`
 	ErrorMsg   string    `xorm:"comment('错误信息') VARCHAR(255)" json:"error_msg"`
 	Request    string    `xorm:"comment('请求原文') VARCHAR(255)" json:"request"`

@@ -20,6 +20,9 @@ func init() {
 	mysql.SetEngine()
 	model.SyncHistory()
 }
+
+var fresh []string
+
 func main() {
 	var (
 		c  = 0
@@ -28,14 +31,6 @@ func main() {
 	runLevel := util.GetVal("main", "level")
 	//cache := make(map[string]string)
 	outname := "after.srt"
-	switch runLevel {
-	case "baidu":
-
-		outname = "baidu.srt"
-	case "trans":
-		outname = "trans.srt"
-	}
-
 	before := util.ReadByLine("before.srt")
 	after, _ := os.OpenFile(outname, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0777)
 	for i := 0; i < len(before); i += 4 {
@@ -58,23 +53,15 @@ func main() {
 			}
 			dst = replace.ChinesePunctuation(dst)
 			after.WriteString(fmt.Sprintf("%s\n", dst))
-			his := new(model.History)
-			his.From = util.GetVal("mysql", "from")
-			his.To = util.GetVal("mysql", "to")
-			his.Src = src
-			his.Dst = dst
-			if one, err := his.InsertOne(); err != nil {
-				slog.Warn("数据库插入新条目失败", slog.String("源", src), slog.String("目标", dst), slog.Any("错误原文", err))
-			} else {
-				slog.Debug("成功插入缓存到数据库", slog.Int64("条目", one))
-			}
+
 			nc++
+			fresh = append(fresh, dst)
 			time.Sleep(2 * time.Second)
 		}
 		after.WriteString(fmt.Sprintf("%s\n", before[i+3]))
 		after.Sync()
 	}
-	slog.Info("翻译结束", slog.Int("从缓存中找到", c), slog.Int("新建查询", nc))
+	slog.Info("翻译结束", slog.Int("从缓存中找到", c), slog.Int("新建查询", nc), slog.Any("其中增加的单词", fresh))
 }
 
 func setLog() {

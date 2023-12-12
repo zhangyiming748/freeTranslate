@@ -72,6 +72,17 @@ func AskBaidu(query string) string {
 	}
 	resule := replace.ChinesePunctuation(s.TransResult[0].Dst)
 	slog.Debug("翻译成功", slog.String("原文", query), slog.String("译文", resule))
+	his := new(model.History)
+	his.From = from
+	his.To = to
+	his.Src = query
+	his.Dst = resule
+	his.Source = "baidu"
+	if one, err := his.InsertOne(); err != nil {
+		slog.Warn("数据库插入新条目失败", slog.String("源", query), slog.String("目标", resule), slog.Any("错误原文", err))
+	} else {
+		slog.Debug("成功插入缓存到数据库", slog.Int64("条目", one))
+	}
 	return resule
 }
 
