@@ -8,6 +8,7 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -20,8 +21,18 @@ var fresh []string
 
 func main() {
 	//cache := make(map[string]string)
+	files, _ := os.ReadDir("./")
+	for i, file := range files {
+		if strings.HasSuffix(file.Name(), ".srt") {
+			slog.Debug("NO.", slog.Int("NO.", i+1))
+			trans(file.Name())
+		}
+	}
+
+}
+func trans(srt string) {
 	outname := "after.srt"
-	before := util.ReadByLine("before.srt")
+	before := util.ReadByLine(srt)
 	after, _ := os.OpenFile(outname, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0777)
 	for i := 0; i < len(before); i += 4 {
 		after.WriteString(fmt.Sprintf("%s\n", before[i]))
@@ -43,11 +54,10 @@ func main() {
 		after.WriteString(fmt.Sprintf("%s\n", before[i+3]))
 		after.Sync()
 	}
-	os.Remove("before.srt")
-	os.Rename("after.srt", "before.srt")
+	os.Remove(srt)
+	os.Rename("after.srt", srt)
 
 }
-
 func setLog() {
 	opt := slog.HandlerOptions{ // 自定义option
 		AddSource: true,
