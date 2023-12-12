@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"freeTranslate/baidu"
 	"freeTranslate/replace"
+	"freeTranslate/sql"
 	"freeTranslate/util"
 	"log/slog"
 	"os"
@@ -35,5 +36,12 @@ func Translate(src string) string {
 	}
 	//dst := string(output)
 	dst = replace.ChinesePunctuation(dst)
+	his := new(sql.History)
+	his.From = from
+	his.To = to
+	his.Src = src
+	his.Dst = dst
+	his.Source = "translate"
+	his.SetOne()
 	return dst
 }

@@ -30,9 +30,9 @@ func main() {
 		var dst string
 		cache := new(sql.History)
 		cache.Src = src
-		if cache.ExistSrc() {
-			cache.FindOneBySrc()
+		if result := cache.FindOneBySrc(); result.Error == nil {
 			dst = cache.Dst
+			slog.Debug("find in cache")
 		} else {
 			dst = translateShell.Translate(src)
 			time.Sleep(1 * time.Second)
@@ -43,6 +43,8 @@ func main() {
 		after.WriteString(fmt.Sprintf("%s\n", before[i+3]))
 		after.Sync()
 	}
+	os.Remove("before.srt")
+	os.Rename("after.srt", "before.srt")
 
 }
 
