@@ -16,17 +16,17 @@ from = jp
 to = zh
 [mysql]
 ;是否开启数据库缓存,避免同一个词被多次查询
-switch = on
+;switch = on
 ;数据库用户名
-user = zen
+;user = zen
 ;数据库密码
-passwd = 163453
+;passwd = 163453
 ;要使用的数据库
-database = mydb
+;database = mydb
 ;数据库地址
 ip = 192.168.1.5
 ;数据库端口
-port = 3306
+;port = 3306
 ;apk add translate-shell
 ;apt-get install translate-shell
 ;dnf install translate-shell
@@ -36,3 +36,7 @@ from = ja
 to = zh
 proxy = 192.168.1.20:8889
 ```
+
+# 改用sqllite作为数据库
+
+文件名`trans.db`
