@@ -24,3 +24,14 @@ const (
 	EN = "en"
 	ZH = "zh"
 )
+
+var T2B = map[string]string{
+	"en":    "en",
+	"ja":    "jp",
+	"zh-CN": "zh",
+	"ko":    "kor", // 韩语
+	"th":    "th",  // 泰语
+	"de":    "de",  //德语
+	"fr":    "fra", //法语
+	"ru":    "ru",  // 俄语
+}

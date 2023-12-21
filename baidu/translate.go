@@ -10,6 +10,7 @@ import (
 	"freeTranslate/sql"
 	"freeTranslate/util"
 	"log/slog"
+	"os"
 	"strings"
 )
 
@@ -28,9 +29,17 @@ type Failure struct {
 
 func AskBaidu(query string) string {
 	appid := util.GetVal("baidu", "appid")
+	if eappid := os.Getenv("APPID"); eappid != "" {
+		appid = eappid
+		slog.Info("使用环境变量的appid")
+	}
 	key := util.GetVal("baidu", "key")
-	from := util.GetVal("baidu", "from")
-	to := util.GetVal("baidu", "to")
+	if ekey := os.Getenv("APPID"); ekey != "" {
+		key = ekey
+		slog.Info("使用环境变量的key")
+	}
+	from := constant.T2B[util.GetVal("shell", "from")]
+	to := constant.T2B[util.GetVal("shell", "to")]
 
 	salt := GetSalt()
 	after := strings.Join([]string{appid, query, salt, key}, "") //拼接字符串
