@@ -13,3 +13,4 @@ go.work
 conf.ini
 *.srt
 trans.db
+Sensitive.txt

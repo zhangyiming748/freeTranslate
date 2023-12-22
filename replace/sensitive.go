@@ -2,17 +2,18 @@ package replace
 
 import (
 	"freeTranslate/util"
+	"log/slog"
 	"strings"
 )
 
-var Sensitive map[string]string
+var Sensitive = map[string]string{}
 
-func init() {
-	SetSensitive()
-}
 func GetSensitive(str string) string {
 	for k, v := range Sensitive {
-		strings.Replace(str, k, v, -1)
+		if strings.Contains(str, k) {
+			strings.Replace(str, k, v, -1)
+			slog.Debug("替换生效", slog.String("key", strings.Split(v, ":")[0]), slog.String("value", strings.Split(v, ":")[1]))
+		}
 	}
 	return str
 }

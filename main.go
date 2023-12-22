@@ -26,6 +26,7 @@ func init() {
 var fresh []string
 
 func main() {
+	replace.SetSensitive()
 	folders := GetAllFolder.List(util.GetVal("root", "dir"))
 	folders = append(folders, util.GetVal("root", "dir"))
 	for _, folder := range folders {
@@ -74,6 +75,7 @@ func trans(srt string) {
 		}
 		dst = replace.GetSensitive(dst)
 		slog.Info("", slog.String("文件名", tmpname), slog.String("原文", src), slog.String("译文", dst))
+		after.WriteString(fmt.Sprintf("%s\n", src))
 		after.WriteString(fmt.Sprintf("%s\n", dst))
 		fresh = append(fresh, dst)
 
