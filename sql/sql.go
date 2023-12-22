@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"log/slog"
+	"os"
 )
 
 var db *gorm.DB
@@ -12,8 +14,10 @@ func SetEngine() {
 	db, _ = gorm.Open(sqlite.Open("trans.db"), &gorm.Config{})
 	// 迁移 schema
 	err := db.AutoMigrate(History{})
+	err = db.AutoMigrate(Sensitive{})
 	if err != nil {
-		return
+		slog.Error("数据库初始化失败", slog.Any("错误原文", err))
+		os.Exit(-1)
 	}
 	// Create
 	//db.Create(&Product{Code: "D42", Price: 100})
