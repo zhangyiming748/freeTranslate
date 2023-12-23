@@ -49,7 +49,7 @@ func trans(srt string) {
 	before := util.ReadByLine(srt)
 	after, _ := os.OpenFile(tmpname, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0777)
 	for i := 0; i < len(before); i += 4 {
-		if i+3 > len(before) {
+		if i+4 > len(before) {
 			continue
 		}
 		after.WriteString(fmt.Sprintf("%s\n", before[i]))

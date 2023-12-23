@@ -1,17 +1,19 @@
 version: "3"
 services:
-  golang1.21.5-alpine3.18:
+  trans:
     stdin_open: true
     tty: true
-    container_name: test2
+    container_name: en2zh
     environment:
-      - APPID=appid
-      - KEY=key
-      - FROM=ja
+      - APPID=xxxxxxxxxxxxxxxxx
+      - KEY=xxxxxxxxxxxxxxxxxxxx
+      - FROM=en
       - TO=zh-CN
       - PROXY=192.168.1.20:8889
     volumes:
       - /d/srt:/srt
-      - /d/srt/database:/data
-    image: golang:1.21.5-alpine3.18
-    command: ash
+      - /d/database:/data
+    privileged: true
+    network_mode: host
+    image: trans:v4
+#    command: ash

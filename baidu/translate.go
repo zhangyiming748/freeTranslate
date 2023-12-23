@@ -28,6 +28,11 @@ type Failure struct {
 }
 
 func AskBaidu(query string) string {
+	defer func() {
+		if err := recover(); err != nil {
+			return
+		}
+	}()
 	appid := os.Getenv("APPID")
 	slog.Info("使用环境变量的appid")
 	key := os.Getenv("APPID")
