@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"freeTranslate/GetAllFolder"
 	"freeTranslate/GetFileInfo"
+	"freeTranslate/count"
 	"freeTranslate/replace"
 	sql "freeTranslate/sql"
 	"freeTranslate/translateShell"
@@ -69,6 +70,7 @@ func trans(srt string) {
 		if result := cache.FindOneBySrc(); result.Error == nil {
 			dst = cache.Dst
 			slog.Debug("find in cache")
+			count.Add("cache")
 		} else {
 			dst = translateShell.Translate(src)
 			time.Sleep(1 * time.Second)
@@ -85,6 +87,8 @@ func trans(srt string) {
 	origin := strings.Join([]string{strings.Replace(srt, ".srt", "", 1), "_origin", ".srt"}, "")
 	exec.Command("cp", srt, origin).CombinedOutput()
 	os.Rename(tmpname, srt)
+	t, b, c := count.Get()
+	slog.Info("统计", slog.Int("缓存", c), slog.Int("百度", b), slog.Int("shell", t))
 
 }
 func setLog() {

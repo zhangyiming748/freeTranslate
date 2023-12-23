@@ -3,6 +3,7 @@ package translateShell
 import (
 	"fmt"
 	"freeTranslate/baidu"
+	"freeTranslate/count"
 	"freeTranslate/replace"
 	"freeTranslate/sql"
 	"freeTranslate/util"
@@ -32,6 +33,7 @@ func Translate(src string) string {
 		time.Sleep(1 * time.Second)
 		slog.Warn("临时使用百度翻译")
 		dst = baidu.AskBaidu(src)
+		count.Add("baidu")
 		return dst
 	}
 	//dst := string(output)
@@ -43,5 +45,6 @@ func Translate(src string) string {
 	his.Dst = dst
 	his.Source = "translate"
 	his.SetOne()
+	count.Add("trans")
 	return dst
 }
