@@ -6,7 +6,6 @@ import (
 	"freeTranslate/count"
 	"freeTranslate/replace"
 	"freeTranslate/sql"
-	"freeTranslate/util"
 	"log/slog"
 	"os"
 	"os/exec"
@@ -21,9 +20,9 @@ func Translate(src string) string {
 		slog.Warn("windows系统需要在Linux子系统中运行")
 		os.Exit(-1)
 	}
-	from := util.GetVal("shell", "from")
-	to := util.GetVal("shell", "to")
-	proxy := util.GetVal("shell", "proxy")
+	from := os.Getenv("FROM")
+	to := os.Getenv("TO")
+	proxy := os.Getenv("PROXY")
 	language := strings.Join([]string{from, to}, ":")
 	cmd := exec.Command("trans", "-brief", "-proxy", proxy, language, src)
 	fmt.Println(cmd)

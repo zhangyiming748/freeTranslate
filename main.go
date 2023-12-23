@@ -28,8 +28,8 @@ var fresh []string
 
 func main() {
 	replace.SetSensitive()
-	folders := GetAllFolder.List(util.GetVal("root", "dir"))
-	folders = append(folders, util.GetVal("root", "dir"))
+	folders := GetAllFolder.List("/srt")
+	folders = append(folders, "/srt")
 	for _, folder := range folders {
 		files := GetFileInfo.GetAllFileInfo(folder, "srt")
 		for _, file := range files {
@@ -40,15 +40,6 @@ func main() {
 		}
 	}
 	cpdatabase()
-	//cache := make(map[string]string)
-	//files, _ := os.ReadDir("./")
-	//for i, file := range files {
-	//	if strings.HasSuffix(file.Name(), ".srt") {
-	//		slog.Debug("NO.", slog.Int("NO.", i+1))
-	//		trans(file.Name())
-	//	}
-	//}
-
 }
 func trans(srt string) {
 	seed := rand.New(rand.NewSource(time.Now().Unix()))

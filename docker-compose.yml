@@ -7,6 +7,9 @@ services:
     environment:
       - APPID=appid
       - KEY=key
+      - FROM=ja
+      - TO=zh-CN
+      - PROXY=192.168.1.20:8889
     volumes:
       - /d/srt:/srt
       - /d/srt/database:/data
