@@ -34,4 +34,5 @@ var T2B = map[string]string{
 	"de":    "de",  //德语
 	"fr":    "fra", //法语
 	"ru":    "ru",  // 俄语
+	"sp":    "spa", // 西班牙语
 }
