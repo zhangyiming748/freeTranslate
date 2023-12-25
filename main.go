@@ -12,6 +12,7 @@ import (
 	"io"
 	"log/slog"
 	"math/rand"
+	"net"
 	"os"
 	"os/exec"
 	"strconv"
@@ -51,6 +52,15 @@ func main() {
 
 }
 func trans(srt string) {
+	host := strings.Split(util.GetVal("shell", "proxy"), ":")[0]
+	port := strings.Split(util.GetVal("shell", "proxy"), ":")[1]
+	if conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), time.Second*5); err != nil {
+		slog.Error("代理网址不可达")
+		os.Exit(-1)
+	} else {
+		slog.Info("", slog.Any("本地连接", conn.LocalAddr()), slog.Any("远程连接", conn.RemoteAddr()))
+	}
+
 	seed := rand.New(rand.NewSource(time.Now().Unix()))
 	r := seed.Intn(2000)
 	//中间文件名
@@ -77,7 +87,7 @@ func trans(srt string) {
 		}
 		dst = replace.GetSensitive(dst)
 		slog.Info("", slog.String("文件名", tmpname), slog.String("原文", src), slog.String("译文", dst))
-		after.WriteString(fmt.Sprintf("%s\n", src))
+		//after.WriteString(fmt.Sprintf("%s\n", src))
 		after.WriteString(fmt.Sprintf("%s\n", dst))
 		fresh = append(fresh, dst)
 
