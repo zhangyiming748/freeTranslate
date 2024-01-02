@@ -74,20 +74,23 @@ func trans(srt string) {
 		after.WriteString(fmt.Sprintf("%s\n", before[i]))
 		after.WriteString(fmt.Sprintf("%s\n", before[i+1]))
 		src := before[i+2]
+
+		afterSrc := replace.GetSensitive(src)
+
 		var dst string
 		cache := new(sql.History)
-		cache.Src = src
+		cache.Src = afterSrc
 		if result := cache.FindOneBySrc(); result.Error == nil {
 			dst = cache.Dst
 			slog.Debug("find in cache")
 			count.Add("cache")
 		} else {
-			dst = translateShell.Translate(src)
+			dst = translateShell.Translate(afterSrc)
 			time.Sleep(1 * time.Second)
 		}
 		dst = replace.GetSensitive(dst)
 		slog.Info("", slog.String("文件名", tmpname), slog.String("原文", src), slog.String("译文", dst))
-		//after.WriteString(fmt.Sprintf("%s\n", src))
+		after.WriteString(fmt.Sprintf("%s\n", src))
 		after.WriteString(fmt.Sprintf("%s\n", dst))
 		fresh = append(fresh, dst)
 
