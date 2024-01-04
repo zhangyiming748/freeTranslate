@@ -1,0 +1,16 @@
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+go.work
+.idea
+.DS_Store
+*.log
+conf.ini
+*.srt
+trans.db
+Sensitive.txt
