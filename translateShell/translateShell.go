@@ -1,7 +1,6 @@
 package translateShell
 
 import (
-	"fmt"
 	"freeTranslate/count"
 	"freeTranslate/replace"
 	"freeTranslate/sql"
@@ -20,27 +19,24 @@ func Translate(src string) string {
 		slog.Warn("windows系统需要在Linux子系统中运行")
 		os.Exit(-1)
 	}
+	google := make(chan string, 1)
+	bing := make(chan string, 1)
 	from := util.GetVal("shell", "from")
 	to := util.GetVal("shell", "to")
 	proxy := util.GetVal("shell", "proxy")
 	language := strings.Join([]string{from, to}, ":")
-	cmd := exec.Command("trans", "-brief", language, src, "-engine", "bing")
-	//cmd := exec.Command("trans", "-brief", "-proxy", proxy, language, src,"-engine", "google")
-	fmt.Println(cmd, proxy)
-	output, err := cmd.CombinedOutput()
-	dst := string(output)
-	if err != nil || output == nil || strings.Contains(string(output), "\u001B") || strings.Contains(string(output), "Connectiontimedout.RetryingIPv4connection") {
-		slog.Warn("查询失败,原文返回", slog.String("单词", src))
-		time.Sleep(1 * time.Second)
+	go searchByGoogle(src, language, proxy, google)
+	go searchByBing(src, language, bing)
+	dst := src
+	select {
+	case <-time.After(3 * time.Second):
+		slog.Warn("Timeout !")
 		dst = src
-		//time.Sleep(1 * time.Second)
-		//slog.Warn("临时使用百度翻译")
-		//dst = baidu.AskBaidu(src)
-		//count.Add("baidu")
-		//return dst
+	case dst = <-google:
+		slog.Debug("从Google获取翻译", slog.String("原文", src), slog.String("译文", dst))
+	case dst = <-bing:
+		slog.Debug("从Bing获取翻译", slog.String("原文", src), slog.String("译文", dst))
 	}
-	//dst := string(output)
-	dst = replace.ChinesePunctuation(dst)
 	his := new(sql.History)
 	his.From = from
 	his.To = to
@@ -50,4 +46,28 @@ func Translate(src string) string {
 	his.SetOne()
 	count.Add("trans")
 	return dst
+}
+
+func searchByGoogle(src, language, proxy string, c chan string) {
+	cmd := exec.Command("trans", "-brief", "-proxy", proxy, language, src, "-engine", "google")
+	output, err := cmd.CombinedOutput()
+	dst := string(output)
+	if err != nil || output == nil || strings.Contains(dst, "\u001B") || strings.Contains(dst, "Connectiontimedout.RetryingIPv4connection") {
+		slog.Warn("查询失败")
+	} else {
+		dst = replace.ChinesePunctuation(dst)
+		c <- dst
+	}
+}
+
+func searchByBing(src, language string, c chan string) {
+	cmd := exec.Command("trans", "-brief", language, src, "-engine", "bing")
+	output, err := cmd.CombinedOutput()
+	dst := string(output)
+	if err != nil || output == nil || strings.Contains(dst, "\u001B") || strings.Contains(dst, "Connectiontimedout.RetryingIPv4connection") {
+		slog.Warn("查询失败")
+	} else {
+		dst = replace.ChinesePunctuation(dst)
+		c <- dst
+	}
 }
