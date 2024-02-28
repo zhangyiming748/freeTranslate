@@ -9,7 +9,6 @@ import (
 	sql "freeTranslate/sql"
 	"freeTranslate/translateShell"
 	"freeTranslate/util"
-	"io"
 	"log/slog"
 	"math/rand"
 	"net"
@@ -110,12 +109,13 @@ func setLog() {
 		AddSource: true,
 		Level:     slog.LevelDebug, // slog 默认日志级别是 info
 	}
-	file := "trans.log"
-	logf, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
-	if err != nil {
-		panic(err)
-	}
-	logger := slog.New(slog.NewJSONHandler(io.MultiWriter(logf, os.Stdout), &opt))
+	//file := "trans.log"
+	//logf, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//logger := slog.New(slog.NewJSONHandler(io.MultiWriter(logf, os.Stdout), &opt))
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &opt))
 	slog.SetDefault(logger)
 }
 func cpdatabase() {
