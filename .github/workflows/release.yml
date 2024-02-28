@@ -38,4 +38,4 @@ jobs:
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.GO_RELEASER_GITHUB_TOKEN }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GO_RELEASER_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
