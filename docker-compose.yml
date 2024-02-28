@@ -1,0 +1,11 @@
+version: "3"
+services:
+  golang1.21.5-alpine3.18:
+    stdin_open: true
+    tty: true
+    container_name: trans
+    volumes:
+      - /d/srt:/srt
+      - /d/srt/database:/data
+    image: golang:1.21.5-alpine3.18
+    command: ash
