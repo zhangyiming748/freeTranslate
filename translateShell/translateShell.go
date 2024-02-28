@@ -35,7 +35,7 @@ func Translate(src string) string {
 
 	go TransByGoogle(proxy, language, src, google)
 	go TransByBing(proxy, language, src, bing)
-	
+
 	var dst string
 	select {
 	case dst = <-bing:
@@ -45,6 +45,7 @@ func Translate(src string) string {
 	case <-time.After(TIMEOUT * time.Second):
 		slog.Error("单词翻译出现严重问题")
 	}
+
 	dst = replace.ChinesePunctuation(dst)
 
 	his.From = from
